@@ -67,17 +67,46 @@ class SimpleToolsMainFrame(wx.Frame):
         MainPanel = wx.Panel(self)
         # 定义MainBox
         PanelFont = wx.SystemSettings.GetFont(wx.SYS_SYSTEM_FONT)
-        PanelFont.SetPointSize(9)
         MainBox = wx.BoxSizer(wx.VERTICAL)
-        # 定义ReadDataBox
-        ReadDataBox = wx.BoxSizer(wx.HORIZONTAL)
+
+        # 定义Box_ReadData
+        Box_ReadData = wx.BoxSizer(wx.HORIZONTAL)
         String_ReadDataPath = wx.StaticText(MainPanel, label='点云路径')
         String_ReadDataPath.SetFont(PanelFont)
-        ReadDataBox.Add(String_ReadDataPath, flag=wx.RIGHT, border=8)
-        ReadDataPathStringTextCtrl = wx.TextCtrl(MainPanel)
-        ReadDataBox.Add(ReadDataPathStringTextCtrl, proportion=1)
-        MainBox.Add(ReadDataBox, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, border=10)
+        Box_ReadData.Add(String_ReadDataPath, flag=wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border=10)
+        TextCtrl_ReadDataPathString = wx.TextCtrl(MainPanel, value='输入点云文件夹(文件夹中不要有多余文件)')
+        Box_ReadData.Add(TextCtrl_ReadDataPathString, proportion=1)
+        MainBox.Add(Box_ReadData, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, border=10)
         MainBox.Add((-1, 10))
+
+        # 定义Box_DataCheck
+        Box_DataFormat = wx.BoxSizer(wx.HORIZONTAL)
+        String_DataFormat = wx.StaticText(MainPanel, label='数据格式')
+        String_DataFormat.SetFont(PanelFont)
+        List_Of_Data_Format = ['阵列数据', '散点数据']
+        List_Of_Data_Column_Num = ['3列', '4列']
+        ComboBox_Of_Data_Format = wx.ComboBox(MainPanel, -1, value='阵列数据', choices=List_Of_Data_Format, style=wx.CB_SORT)
+        ComboBox_Of_Data_Column_Num = wx.ComboBox(MainPanel, -1, value='3列', choices=List_Of_Data_Column_Num, style=wx.CB_SORT)
+        Box_DataFormat.Add(String_DataFormat, flag=wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border=10)
+        Box_DataFormat.Add(ComboBox_Of_Data_Format, proportion=0, flag=wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border=10)
+        Box_DataFormat.Add(ComboBox_Of_Data_Column_Num, proportion=0, flag=wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border=10)
+
+        Button_ArrayDataToScatterData = wx.Button(MainPanel, label='阵列转散点', size=(80, 25))
+        Box_DataFormat.Add(Button_ArrayDataToScatterData, flag=wx.RIGHT, border=10)
+        Button_DataSampling = wx.Button(MainPanel, label='采样', size=(80, 25))
+        Box_DataFormat.Add(Button_DataSampling, flag=wx.RIGHT, border=10)
+        Button_DataSave = wx.Button(MainPanel, label='保存', size=(80, 25))
+        Box_DataFormat.Add(Button_DataSave, flag=wx.RIGHT, border=10)
+
+        MainBox.Add(Box_DataFormat, flag=wx.ALIGN_LEFT | wx.LEFT, border=10)
+        MainBox.Add((-1, 10))
+
+        # 定义Box_Gauge
+        Box_Gauge = wx.BoxSizer(wx.HORIZONTAL)
+        Gauge = wx.Gauge(MainPanel, -1, 100, size=(-1, 25))
+        Box_Gauge.Add(Gauge, proportion=1)
+        MainBox.Add(Box_Gauge, flag=wx.ALIGN_CENTER_VERTICAL | wx.EXPAND | wx.LEFT | wx.RIGHT, border=10)
+        MainBox.Add(-1, 10)
 
         MainPanel.SetSizer(MainBox)
 

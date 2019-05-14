@@ -23,7 +23,6 @@ class SimpleToolsMainFrame(wx.Frame):
         self.Show(True)
 
     '''菜单栏初始化函数'''
-
     def MenuBarInit(self):
         self.MenuBar = wx.MenuBar()
         # 一级菜单定义
@@ -50,19 +49,16 @@ class SimpleToolsMainFrame(wx.Frame):
         HelpMenu.Append(HelpItem)
 
     '''工具栏初始化函数'''
-
     def ToolBarInit(self):
         self.ToolBar = self.CreateToolBar()
         self.ToolBar.Realize()
 
     '''状态栏初始化函数'''
-
     def StatusBarInit(self):
         self.StatusBar = self.CreateStatusBar()
         self.StatusBar.SetStatusText('启动完成')
 
     '''布局管理初始化函数'''
-
     def PanelInit(self):
         MainPanel = wx.Panel(self)
         # 定义MainBox
@@ -91,6 +87,8 @@ class SimpleToolsMainFrame(wx.Frame):
         Box_DataFormat.Add(ComboBox_Of_Data_Format, proportion=0, flag=wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border=10)
         Box_DataFormat.Add(ComboBox_Of_Data_Column_Num, proportion=0, flag=wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border=10)
 
+        Button_DataRead = wx.Button(MainPanel, label='读取', size=(80, 25))
+        Box_DataFormat.Add(Button_DataRead, flag=wx.RIGHT, border=10)
         Button_ArrayDataToScatterData = wx.Button(MainPanel, label='阵列转散点', size=(80, 25))
         Box_DataFormat.Add(Button_ArrayDataToScatterData, flag=wx.RIGHT, border=10)
         Button_DataSampling = wx.Button(MainPanel, label='采样', size=(80, 25))

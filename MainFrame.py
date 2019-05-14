@@ -17,7 +17,7 @@ class SimpleToolsMainFrame(wx.Frame):
         self.PanelInit()  # 布局管理初始化
 
         # 窗口样式
-        self.SetSize((400, 600))
+        self.SetSize((600, 600))
         self.SetTitle('XDSimpleTools')
         self.Centre()
         self.Show(True)
@@ -64,7 +64,22 @@ class SimpleToolsMainFrame(wx.Frame):
     '''布局管理初始化函数'''
 
     def PanelInit(self):
-        pass
+        MainPanel = wx.Panel(self)
+        # 定义MainBox
+        PanelFont = wx.SystemSettings.GetFont(wx.SYS_SYSTEM_FONT)
+        PanelFont.SetPointSize(9)
+        MainBox = wx.BoxSizer(wx.VERTICAL)
+        # 定义ReadDataBox
+        ReadDataBox = wx.BoxSizer(wx.HORIZONTAL)
+        String_ReadDataPath = wx.StaticText(MainPanel, label='点云路径')
+        String_ReadDataPath.SetFont(PanelFont)
+        ReadDataBox.Add(String_ReadDataPath, flag=wx.RIGHT, border=8)
+        ReadDataPathStringTextCtrl = wx.TextCtrl(MainPanel)
+        ReadDataBox.Add(ReadDataPathStringTextCtrl, proportion=1)
+        MainBox.Add(ReadDataBox, flag=wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, border=10)
+        MainBox.Add((-1, 10))
+
+        MainPanel.SetSizer(MainBox)
 
 
 def main():

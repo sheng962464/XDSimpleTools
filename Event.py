@@ -56,7 +56,8 @@ def DataSimpling(BeforeData, Data_Column_Num, SampleNum):
         for i in range(BeforeData.shape[0]):
             List_Of_Points_In_Line = []
             for j in range(0, BeforeData.shape[1], Data_Column_Num * SampleNum):
-                List_Of_Points_In_Line.append(BeforeData[i][j])
+                for k in range(Data_Column_Num):
+                    List_Of_Points_In_Line.append(BeforeData[i][j + k])
             List_Of_Points.append(List_Of_Points_In_Line)
         AfterData = numpy.array(List_Of_Points)
         return AfterData
@@ -64,13 +65,13 @@ def DataSimpling(BeforeData, Data_Column_Num, SampleNum):
 
 # 保存数据
 def DataSaving(DataPath, Data):
-    Data.tofile(DataPath)
+    numpy.savetxt(DataPath, Data)
     return True
 
 
 if __name__ == '__main__':
     DataPath = r"G:\缓存\problem2#\20190513173949BBB"
-    SavePath = r"G:\缓存\problem2#\20190513173949BBB\1.txt"
+    SavePath = r"G:\缓存\problem2#\20190513173949BBB\5.txt"
     Point_Column_Num = 4
     Data_Format = '阵列'
     List_Of_File = FolderReading(DataPath)
@@ -80,7 +81,9 @@ if __name__ == '__main__':
         test = DataReading(List_Of_File[0])
         # 输出正确，下午添加改成numpy.array
         print(test.shape)
-        test2 = DataSimpling(test, 4, 10)
+        test2 = DataSimpling(test, 4, 32)
         print(test2.shape)
-        if (DataSaving(SavePath, test2)):
+        test3 = ArrayDataToScatterDate(test2, 4)
+        print(test3)
+        if (DataSaving(SavePath, test3)):
             print("保存成功")

@@ -2,14 +2,17 @@
 # -*- coding: utf-8 -*-
 
 import wx
+import os
 import Event
 
 
 # SimpleTools主界面
 class SimpleToolsMainFrame(wx.Frame):
     def __init__(self, *args, **kwargs):
-        self.List_Of_File = []
-        self.List_Of_Points_In_Folder = []
+        self.List_Of_File = []  # 存放输入文件夹中所有文件的绝对路径
+        self.List_Of_Points_In_Folder = []  # 存放输入文件夹中所有文件的点
+        self.Point_Column_Num = 0  # 存放界面参数 ComboBox_Of_Data_Column_Num
+        self.Point_Format = 0  # 存放界面参数 ComboBox_Of_Data_Format
         super(SimpleToolsMainFrame, self).__init__(*args, **kwargs)
         self.InitUI()
 
@@ -89,25 +92,23 @@ class SimpleToolsMainFrame(wx.Frame):
         Box_DataFormat.Add(String_DataFormat, flag=wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border=10)
         Box_DataFormat.Add(self.ComboBox_Of_Data_Format, proportion=0, flag=wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border=10)
         Box_DataFormat.Add(self.ComboBox_Of_Data_Column_Num, proportion=0, flag=wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, border=10)
-
         #######################################################################################
         Button_DataRead = wx.Button(MainPanel, label='读取', size=(80, 25))
         Box_DataFormat.Add(Button_DataRead, flag=wx.RIGHT, border=10)
         self.Bind(wx.EVT_BUTTON, self.DataRead_Events, id=Button_DataRead.GetId())
         #######################################################################################
-        Button_ArrayDataToScatterData = wx.Button(MainPanel, label='阵列转散点', size=(80, 25))
-        Box_DataFormat.Add(Button_ArrayDataToScatterData, flag=wx.RIGHT, border=10)
-        self.Bind(wx.EVT_BUTTON, self.ArrayDataToScatterData_Event, id=Button_ArrayDataToScatterData.GetId())
-        #######################################################################################
         Button_DataSampling = wx.Button(MainPanel, label='采样', size=(80, 25))
         Box_DataFormat.Add(Button_DataSampling, flag=wx.RIGHT, border=10)
         self.Bind(wx.EVT_BUTTON, self.DataSampling_Event, id=Button_DataSampling.GetId())
+        #######################################################################################
+        Button_ArrayDataToScatterData = wx.Button(MainPanel, label='阵列转散点', size=(80, 25))
+        Box_DataFormat.Add(Button_ArrayDataToScatterData, flag=wx.RIGHT, border=10)
+        self.Bind(wx.EVT_BUTTON, self.ArrayDataToScatterData_Event, id=Button_ArrayDataToScatterData.GetId())
         #######################################################################################
         Button_DataSave = wx.Button(MainPanel, label='保存', size=(80, 25))
         Box_DataFormat.Add(Button_DataSave, flag=wx.RIGHT, border=10)
         self.Bind(wx.EVT_BUTTON, self.DataSave_Event, id=Button_DataSave.GetId())
         #######################################################################################
-
         MainBox.Add(Box_DataFormat, flag=wx.ALIGN_LEFT | wx.LEFT, border=10)
         MainBox.Add((-1, 10))
 
@@ -120,36 +121,64 @@ class SimpleToolsMainFrame(wx.Frame):
 
         MainPanel.SetSizer(MainBox)
 
-    # 定义事件
+    '''定义所有事件'''
+
+    # 读取数据
     def DataRead_Events(self, e):
+        self.Gauge.SetValue(0)
         self.List_Of_File = Event.FolderReading(self.TextCtrl_ReadDataPathString.Value)
         if (len(self.List_Of_File) == 0):
-            print("文件夹内没有文件")
-        file_num = len(self.List_Of_File)
-        temp_step = 100 / file_num
+            print("文件夹内没有文件")  # 要改成对话框形式
         for File in self.List_Of_File:
             self.List_Of_Points_In_Folder.append(Event.DataReading(File))
         self.Gauge.SetValue(100)
+        self.StatusBar.SetStatusText('读取数据完成')
 
+    # 采样
+    def DataSampling_Event(self, e):
+        self.Gauge.SetValue(0)
+        self.Get_Parameters_InTask()
+        file_num = len(self.List_Of_File)
+        GaugeStep = int(100 / file_num)
+        for i in range(len(self.List_Of_Points_In_Folder)):
+            self.List_Of_Points_In_Folder[i] = Event.DataSimpling(self.List_Of_Points_In_Folder[i], self.Point_Column_Num, 32)
+            self.Gauge.SetValue(self.Gauge.Value + GaugeStep)
+        self.Gauge.SetValue(100)
+        self.StatusBar.SetStatusText('取数据结束')
+
+    # 阵列转散点
     def ArrayDataToScatterData_Event(self, e):
-        Point_Column_Num = 0
+        self.Gauge.SetValue(0)
+        self.Get_Parameters_InTask()
+        file_num = len(self.List_Of_File)
+        GaugeStep = int(100 / file_num)
+        for i in range(len(self.List_Of_Points_In_Folder)):
+            self.List_Of_Points_In_Folder[i] = Event.ArrayDataToScatterDate(self.List_Of_Points_In_Folder[i], self.Point_Column_Num)
+            self.Gauge.SetValue(self.Gauge.Value + GaugeStep)
+        self.Gauge.SetValue(100)
+        self.StatusBar.SetStatusText('阵列转散点完成')
+
+    # 保存数据
+    def DataSave_Event(self, e):
+        self.Gauge.SetValue(0)
+        file_num = len(self.List_Of_File)
+        GaugeStep = int(100 / file_num)
+        for i in range(len(self.List_Of_Points_In_Folder)):
+            temp_SavePath = os.path.join(self.TextCtrl_ReadDataPathString.Value, self.List_Of_File[i].split('\\')[-1].split('.')[0] + '.txt')
+            self.List_Of_Points_In_Folder[i] = Event.DataSaving(temp_SavePath, self.List_Of_Points_In_Folder[i])
+            self.Gauge.SetValue(self.Gauge.Value + GaugeStep)
+        self.Gauge.SetValue(100)
+        self.StatusBar.SetStatusText('阵列转散点完成')
+
+    '''公共函数'''
+
+    def Get_Parameters_InTask(self):
         if (self.ComboBox_Of_Data_Column_Num.Value == '3列'):
-            Point_Column_Num = 3
+            self.Point_Column_Num = 3
         elif (self.ComboBox_Of_Data_Column_Num.Value == '4列'):
-            Point_Column_Num = 4
+            self.Point_Column_Num = 4
         else:
             pass
-        file_num = len(self.List_Of_File)
-        temp_step = int(100 / file_num)
-        for i in range(len(self.List_Of_Points_In_Folder)):
-            self.List_Of_Points_In_Folder[i] = Event.ArrayDataToScatterDate(self.List_Of_Points_In_Folder[i], Point_Column_Num)
-            self.Gauge.SetValue(self.Gauge.Value + temp_step)
-
-    def DataSampling_Event(self, e):
-        pass
-
-    def DataSave_Event(self, e):
-        pass
 
 def main():
     ex = wx.App()

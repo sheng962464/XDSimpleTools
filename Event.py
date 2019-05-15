@@ -26,45 +26,61 @@ def FolderReading(FolderPath):
 
 
 # 数据读取
-def DataReading(FilePath, Data_Column_Num, Data_Format):
+def DataReading(FilePath):
     List_Of_Points = []
     with open(FilePath) as f:
         for line in f:
-            List_Of_Points_In_Line = line.split(',')  # 行内数据按','分割
-            for i in range(0, len(List_Of_Points_In_Line), Data_Column_Num):
-                if (float(List_Of_Points_In_Line[i + 2]) < 500):  # 剔除无效点
-                    Point = [List_Of_Points_In_Line[i], List_Of_Points_In_Line[i + 1], List_Of_Points_In_Line[i + 2]]
-                    Point = [float(x) for x in Point]
-                    List_Of_Points.append(Point)
+            temp = line.split(',')  # 行内数据按','分割
+            List_Of_Points_In_Line = [float(x) for x in temp]
+            List_Of_Points.append(List_Of_Points_In_Line)
     f.close()
     Array_Of_Point = numpy.array(List_Of_Points)
     return Array_Of_Point
 
 # 阵列数据转散点数据
-def ArrayDataToScatterDate(ArratData):
-    pass
+def ArrayDataToScatterDate(ArrayData, Data_Column_Num):
+    List_Of_Points = []
+    for i in range(ArrayData.shape[0]):
+        for j in range(0, ArrayData.shape[1], Data_Column_Num):
+            if (ArrayData[i][j + 2] < 500):
+                Point = [ArrayData[i][j], ArrayData[i][j + 1], ArrayData[i][j + 2]]
+                List_Of_Points.append(Point)
+    Array_Of_Points = numpy.array(List_Of_Points)
+    return Array_Of_Points
 
 
-# 数据采样
-def DataSimpling(BeforeData):
-    pass
-
-
-# 矩阵合并
-def MatrixMerge(ListOfMatrix):
-    pass
+# 数据采样(均匀采样)
+def DataSimpling(BeforeData, Data_Column_Num, SampleNum):
+    List_Of_Points = []
+    if (BeforeData.shape[1] > 4):
+        for i in range(BeforeData.shape[0]):
+            List_Of_Points_In_Line = []
+            for j in range(0, BeforeData.shape[1], Data_Column_Num * SampleNum):
+                List_Of_Points_In_Line.append(BeforeData[i][j])
+            List_Of_Points.append(List_Of_Points_In_Line)
+        AfterData = numpy.array(List_Of_Points)
+        return AfterData
 
 
 # 保存数据
 def DataSaving(DataPath, Data):
-    pass
+    Data.tofile(DataPath)
+    return True
 
 
 if __name__ == '__main__':
     DataPath = r"G:\缓存\problem2#\20190513173949BBB"
+    SavePath = r"G:\缓存\problem2#\20190513173949BBB\1.txt"
     Point_Column_Num = 4
     Data_Format = '阵列'
     List_Of_File = FolderReading(DataPath)
-    Array_Of_Points = DataReading(List_Of_File[0], Point_Column_Num, Data_Format)
-    # 输出正确，下午添加改成numpy.array
-    print(Array_Of_Points)
+    if (len(List_Of_File) == 0):
+        print("文件路径错误！")
+    else:
+        test = DataReading(List_Of_File[0])
+        # 输出正确，下午添加改成numpy.array
+        print(test.shape)
+        test2 = DataSimpling(test, 4, 10)
+        print(test2.shape)
+        if (DataSaving(SavePath, test2)):
+            print("保存成功")

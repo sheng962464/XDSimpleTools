@@ -10,12 +10,12 @@ import numpy
 
 
 # 获取文件夹下所有文件的绝对路径
-def FolderReading(FolderPath):
+def FolderReading(xFolderPath):
     List_Of_FilePath_In_Folder = []  # 用于存放文件夹中文件的绝对路径
-    if os.path.isdir(FolderPath):
-        List_Of_FileName_In_Folder = os.listdir(FolderPath)  # 读取文件夹中所有的文件名
+    if os.path.isdir(xFolderPath):
+        List_Of_FileName_In_Folder = os.listdir(xFolderPath)  # 读取文件夹中所有的文件名
         for File in List_Of_FileName_In_Folder:
-            FilePath = os.path.join(FolderPath, File)  # 生成文件的绝对路径
+            FilePath = os.path.join(xFolderPath, File)  # 生成文件的绝对路径
             if os.path.isfile(FilePath):
                 if File[0] == '.':  # 去除隐藏文件
                     pass
@@ -28,9 +28,9 @@ def FolderReading(FolderPath):
 
 
 # 数据读取
-def DataReading(FilePath):
+def DataReading(xFilePath):
     List_Of_Points = []
-    with open(FilePath) as f:
+    with open(xFilePath) as f:
         for line in f:
             temp = line.split(',')  # 行内数据按','分割
             List_Of_Points_In_Line = [float(x) for x in temp]
@@ -41,34 +41,34 @@ def DataReading(FilePath):
 
 
 # 阵列数据转散点数据
-def ArrayDataToScatterDate(ArrayData, Data_Column_Num):
+def ArrayDataToScatterDate(xArrayData, xData_Column_Num):
     List_Of_Points = []
-    for i in range(ArrayData.shape[0]):
-        for j in range(0, ArrayData.shape[1], Data_Column_Num):
-            if ArrayData[i][j + 2] > -500:
-                Point = [ArrayData[i][j], ArrayData[i][j + 1], ArrayData[i][j + 2]]
+    for i in range(xArrayData.shape[0]):
+        for j in range(0, xArrayData.shape[1], xData_Column_Num):
+            if xArrayData[i][j + 2] > -500:
+                Point = [xArrayData[i][j], xArrayData[i][j + 1], xArrayData[i][j + 2]]
                 List_Of_Points.append(Point)
     Array_Of_Points = numpy.array(List_Of_Points)
     return Array_Of_Points
 
 
 # 数据采样(均匀采样)
-def DataSimpling(BeforeData, Data_Column_Num, SampleNum):
+def DataSimpling(xBeforeData, xData_Column_Num, xSampleNum):
     List_Of_Points = []
-    if BeforeData.shape[1] > 4:
-        for i in range(BeforeData.shape[0]):
+    if xBeforeData.shape[1] > 4:
+        for i in range(xBeforeData.shape[0]):
             List_Of_Points_In_Line = []
-            for j in range(0, BeforeData.shape[1], Data_Column_Num * SampleNum):
-                for k in range(Data_Column_Num):
-                    List_Of_Points_In_Line.append(BeforeData[i][j + k])
+            for j in range(0, xBeforeData.shape[1], xData_Column_Num * xSampleNum):
+                for k in range(xData_Column_Num):
+                    List_Of_Points_In_Line.append(xBeforeData[i][j + k])
             List_Of_Points.append(List_Of_Points_In_Line)
         AfterData = numpy.array(List_Of_Points)
         return AfterData
 
 
 # 保存数据
-def DataSaving(DataPath, Data):
-    numpy.savetxt(DataPath, Data)
+def DataSaving(xDataPath, xData):
+    numpy.savetxt(xDataPath, xData)
     return True
 
 

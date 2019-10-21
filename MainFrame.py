@@ -127,7 +127,7 @@ class SimpleToolsMainFrame(wx.Frame):
     def DataRead_Events(self, e):
         self.Gauge.SetValue(0)
         self.List_Of_File = Event.FolderReading(self.TextCtrl_ReadDataPathString.Value)
-        if (len(self.List_Of_File) == 0):
+        if len(self.List_Of_File) == 0:
             print("文件夹内没有文件")  # 要改成对话框形式
         for File in self.List_Of_File:
             self.List_Of_Points_In_Folder.append(Event.DataReading(File))
@@ -173,12 +173,13 @@ class SimpleToolsMainFrame(wx.Frame):
     '''公共函数'''
 
     def Get_Parameters_InTask(self):
-        if (self.ComboBox_Of_Data_Column_Num.Value == '3列'):
+        if self.ComboBox_Of_Data_Column_Num.Value == '3列':
             self.Point_Column_Num = 3
-        elif (self.ComboBox_Of_Data_Column_Num.Value == '4列'):
+        elif self.ComboBox_Of_Data_Column_Num.Value == '4列':
             self.Point_Column_Num = 4
         else:
             pass
+
 
 def main():
     ex = wx.App()

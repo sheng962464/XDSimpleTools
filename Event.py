@@ -45,7 +45,8 @@ def ArrayDataToScatterDate(xArrayData, xData_Column_Num):
     List_Of_Points = []
     for i in range(xArrayData.shape[0]):
         for j in range(0, xArrayData.shape[1], xData_Column_Num):
-            if xArrayData[i][j + 2] > -500:
+            # 滤除无效点
+            if -50 < xArrayData[i][j + 2] < 50:
                 Point = [xArrayData[i][j], xArrayData[i][j + 1], xArrayData[i][j + 2]]
                 List_Of_Points.append(Point)
     Array_Of_Points = numpy.array(List_Of_Points)

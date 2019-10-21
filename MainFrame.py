@@ -6,6 +6,9 @@ import os
 import Event
 
 
+sampleInterval = 32     # 采样间隔,每隔n个点取1个点
+
+
 # SimpleTools主界面
 class SimpleToolsMainFrame(wx.Frame):
     def __init__(self, *args, **kwargs):
@@ -125,6 +128,7 @@ class SimpleToolsMainFrame(wx.Frame):
 
     # 读取数据
     def DataRead_Events(self, e):
+        self.List_Of_Points_In_Folder = []
         self.Gauge.SetValue(0)
         self.List_Of_File = Event.FolderReading(self.TextCtrl_ReadDataPathString.Value)
         if len(self.List_Of_File) == 0:
@@ -141,7 +145,7 @@ class SimpleToolsMainFrame(wx.Frame):
         file_num = len(self.List_Of_File)
         GaugeStep = int(100 / file_num)
         for i in range(len(self.List_Of_Points_In_Folder)):
-            self.List_Of_Points_In_Folder[i] = Event.DataSimpling(self.List_Of_Points_In_Folder[i], self.Point_Column_Num, 32)
+            self.List_Of_Points_In_Folder[i] = Event.DataSimpling(self.List_Of_Points_In_Folder[i], self.Point_Column_Num, sampleInterval)
             self.Gauge.SetValue(self.Gauge.Value + GaugeStep)
         self.Gauge.SetValue(100)
         self.StatusBar.SetStatusText('取数据结束')
@@ -168,7 +172,7 @@ class SimpleToolsMainFrame(wx.Frame):
             self.List_Of_Points_In_Folder[i] = Event.DataSaving(temp_SavePath, self.List_Of_Points_In_Folder[i])
             self.Gauge.SetValue(self.Gauge.Value + GaugeStep)
         self.Gauge.SetValue(100)
-        self.StatusBar.SetStatusText('阵列转散点完成')
+        self.StatusBar.SetStatusText('点云保存完成')
 
     '''公共函数'''
 
